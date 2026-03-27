@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app-backend.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app-backend.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      {{- include "app-backend.selectorLabels" . | nindent 6 }}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # no downtime
+
+  template:
+    metadata:
+      labels:
+        {{- include "app-backend.selectorLabels" . | nindent 8 }}
+
+    spec:
+      serviceAccountName: {{ include "app-backend.serviceAccountName" . }}
+
+      {{- if .Values.initContainers.enabled }}
+      initContainers:
+        - name: db-migrate
+          image: "{{ .Values.initContainers.image }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command: {{ toJson .Values.initContainers.command }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "app-backend.fullname" . }}-config
+            - secretRef:
+                name: {{ include "app-backend.fullname" . }}-secret
+      {{- end }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+
+          envFrom:
+            - configMapRef:
+                name: {{ include "app-backend.fullname" . }}-config
+            - secretRef:
+                name: {{ include "app-backend.fullname" . }}-secret
+
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.httpGet.path }}
+              port: {{ .Values.livenessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          volumeMounts:
+            {{- if .Values.logsVolume.enabled }}
+            - name: logs
+              mountPath: {{ .Values.logsVolume.mountPath }}
+            {{- end }}
+            - name: app-config
+              mountPath: /app/config
+              readOnly: true
+
+      volumes:
+        {{- if .Values.logsVolume.enabled }}
+        - name: logs
+          emptyDir: {}
+        {{- end }}
+        - name: app-config
+          configMap:
+            name: {{ include "app-backend.fullname" . }}-files

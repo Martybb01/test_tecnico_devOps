@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app-backend.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app-backend.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.config }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+---
+# ConfigMap per file di configurazione montati come volume.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app-backend.fullname" . }}-files
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app-backend.labels" . | nindent 4 }}
+data:
+  app.yaml: |
+    server:
+      port: {{ .Values.service.targetPort }}
+    logging:
+      level: {{ .Values.config.LOG_LEVEL }}
+    database:
+      host: {{ .Values.config.DB_HOST }}
+      port: {{ .Values.config.DB_PORT }}
+      name: {{ .Values.config.DB_NAME }}

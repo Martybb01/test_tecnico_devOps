@@ -1,0 +1,9 @@
+apiVersion: v2
+name: mysql
+description: MySQL 8 StatefulSet
+type: application
+version: 0.1.0
+appVersion: "8.0"
+maintainers:
+  - name: DevOps Team
+    email: devops@example.com

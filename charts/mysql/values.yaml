@@ -1,0 +1,34 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: mysql
+  tag: "8.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+# Credenziali — in prod passate via --set o External Secrets Operator
+auth:
+  rootPassword: "changeme-root"
+  database: "app"
+  username: "appuser"
+  password: "changeme"
+
+persistence:
+  size: 10Gi
+  storageClass: gp3
+  mountPath: /var/lib/mysql/data
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "1Gi"
+
+config:
+  maxConnections: "200"
+  innodbBufferPoolSize: "256M"
+  characterSet: "utf8mb4"

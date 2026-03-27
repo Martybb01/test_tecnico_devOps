@@ -1,0 +1,28 @@
+image:
+  repository: "123456789.dkr.ecr.eu-west-1.amazonaws.com/app-backend"
+  pullPolicy: Always
+
+replicaCount: 3  # per avere HA su 2 AZ (2 + 1)
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+  limits:
+    cpu: "1000m"
+    memory: "512Mi"
+
+config:
+  NODE_ENV: "production"
+  DB_HOST: "mysql-headless.app-prod.svc.cluster.local"
+  REDIS_HOST: "redis.app-prod.svc.cluster.local"
+  LOG_LEVEL: "warn"
+
+# secrets non definiti qui: vengono passati dalla pipeline ci/cd con --set
+
+ingress:
+  enabled: true
+  host: "api.example.com"
+  tls:
+    enabled: true
+    secretName: "app-backend-tls" # gestito da cert-manager o ACM.

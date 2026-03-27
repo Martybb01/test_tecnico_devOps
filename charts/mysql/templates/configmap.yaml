@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mysql.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mysql.labels" . | nindent 4 }}
+data:
+  my.cnf: |
+    [mysqld]
+    datadir               = {{ .Values.persistence.mountPath }}
+    max_connections       = {{ .Values.config.maxConnections }}
+    innodb_buffer_pool_size = {{ .Values.config.innodbBufferPoolSize }}
+    character-set-server  = {{ .Values.config.characterSet }}
+    collation-server      = utf8mb4_unicode_ci
+    [client]
+    default-character-set = {{ .Values.config.characterSet }}

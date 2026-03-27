@@ -1,0 +1,47 @@
+# lo staging è il mio ambiente di test locale dove uso come immagine traefik/whoami che risponde 200 e ascolta sull'80
+# utile per validare Service/routing senza immagine applicativa reale.
+# Override da CLI: --set image.repository=<image> --set image.tag=<tag>
+image:
+  repository: "traefik/whoami"
+  tag: "latest"
+  pullPolicy: Always
+
+replicaCount: 1 # risparmio costo
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "300m"
+    memory: "256Mi"
+
+config:
+  NODE_ENV: "staging"
+  PORT: "80"
+  DB_HOST: "mysql-headless.app-staging.svc.cluster.local"
+  REDIS_HOST: "redis.app-staging.svc.cluster.local"
+  LOG_LEVEL: "debug" 
+
+# Per test locale: disabilitato perché l'immagine placeholder non ha un migrate.js
+initContainers:
+  enabled: false
+
+livenessProbe:
+  httpGet:
+    port: 80
+readinessProbe:
+  httpGet:
+    port: 80
+
+service:
+  targetPort: 80
+
+pdb:
+  enabled: false  # Con una sola replica il PDB non ha senso
+
+ingress:
+  enabled: true
+  host: "api.staging.example.com"
+  tls:
+    enabled: false

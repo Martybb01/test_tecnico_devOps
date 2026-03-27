@@ -1,0 +1,17 @@
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "2000m"
+    memory: "2Gi"
+
+persistence:
+  size: 10Gi
+  storageClass: gp3
+
+config:
+  maxConnections: "500"
+  innodbBufferPoolSize: "512M"
+
+auth: {} # in prod le credenziali non vengono da questo file

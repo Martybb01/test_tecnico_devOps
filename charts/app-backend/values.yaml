@@ -1,0 +1,94 @@
+# Per prod: helm install ... -f values-prod.yaml
+# Per staging: helm install ... -f values-staging.yaml
+
+image:
+  repository: "your-registry/app-backend"
+  tag: ""
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true 
+  name: ""
+  annotations: {}
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 15
+  periodSeconds: 20
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+config:
+  NODE_ENV: "development"
+  PORT: "3000"
+
+  DB_HOST: "mysql-headless"
+  DB_PORT: "3306"
+  DB_NAME: "app"
+
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  LOG_LEVEL: "info"
+
+# valori per test locale, da sovrascrivere in prod
+secrets:
+  DB_USER: "appuser"
+  DB_PASSWORD: "changeme"
+  REDIS_PASSWORD: ""
+  JWT_SECRET: "changeme-jwt-secret"
+
+
+initContainers:
+  enabled: true
+  image: your-registry/app-backend
+  command: ["node", "scripts/migrate.js"]
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+  # lb opzionale per testing diretto senza ingress
+  loadBalancer:
+    enabled: false
+
+ingress:
+  enabled: true
+  className: "alb"
+  host: "api.example.com"
+  path: "/api/*"
+  tls:
+    enabled: true
+    secretName: "app-backend-tls" 
+
+# Durante un rolling update o un drain del nodo, K8s non spegne i pod
+# se non c'è almeno 1 replica disponibile per prevenire downtime.
+pdb:
+  enabled: true
+  minAvailable: 1
+
+logsVolume:
+  enabled: true
+  mountPath: "/app/logs"

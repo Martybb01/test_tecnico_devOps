@@ -1,0 +1,25 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: redis
+  tag: "8.4-alpine"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+auth:
+  password: ""
+
+persistence:
+  size: 5Gi
+  storageClass: gp3
+  mountPath: /data
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"

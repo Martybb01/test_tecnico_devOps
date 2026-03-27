@@ -1,0 +1,26 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: nginx
+  tag: "1.28-alpine"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+  limits:
+    cpu: "200m"
+    memory: "128Mi"
+
+# nginx ascolta su 8080 invece di 80 perchè i processi non-root non possono aprire porte < 1024.
+containerPort: 8080
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+backendServiceName: "app-backend" # hostname del backend
+backendServicePort: 80
