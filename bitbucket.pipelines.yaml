@@ -1,0 +1,86 @@
+# Pipeline CI/CD x build e push su DockerHub di Docker image + helm deploy su push a main + smoke test base post-deploy per le repliche
+# Non runnata essendo su GitHub e a scopo di test ma validata sintatticamente e semanticamente con yamllint + validator ufficiale Bitbucket
+# Variabili da configurare in Bitbucket > Repository Settings > Pipelines > Repository variables:
+#   DOCKERHUB_USERNAME    (es. martinaboccuzzi)
+#   DOCKERHUB_PASSWORD    (secret)
+#   KUBE_NAMESPACE        (es. app-prod)
+#   KUBECONFIG_B64        base64 del kubeconfig per il cluster target (secret)
+#
+#   - In un contesto reale con app Node.js si aggiungerebbero anche:
+#       * npm ci && npm run lint && npm run test
+#       * image vulnerability scan (es. trivy image) prima del push
+#       * notifica Slack su failure (curl al webhook)
+#       * helm test app-backend se il chart include templates/tests/
+---
+image: docker:24-cli
+
+definitions:
+  steps:
+    - step: &build-and-push
+        name: Build & push Docker image
+        services:
+          - docker
+        script:
+          - export BRANCH=$(echo $BITBUCKET_BRANCH | tr '/' '-')
+          - export IMAGE_TAG=${BRANCH}-${BITBUCKET_COMMIT}
+          - export IMAGE=$DOCKERHUB_USERNAME/app-backend:$IMAGE_TAG
+
+          - docker build -t $IMAGE .
+
+          - echo $DOCKERHUB_PASSWORD | docker login -u \
+              $DOCKERHUB_USERNAME --password-stdin
+          - docker push $IMAGE
+
+          # passa il tag allo step successivo così helm-deploy può usarlo
+          - echo "IMAGE_TAG=$IMAGE_TAG" >> deploy.env
+        artifacts:
+          - deploy.env
+
+    - step: &helm-deploy
+        name: Deploy Helm chart
+        image: alpine/helm:3.14.0
+        script:
+          - source deploy.env
+          - echo $KUBECONFIG_B64 | base64 -d > /tmp/kubeconfig
+          - export KUBECONFIG=/tmp/kubeconfig
+
+          - helm lint charts/app-backend
+
+          - helm upgrade --install app-backend charts/app-backend
+              --namespace $KUBE_NAMESPACE
+              --create-namespace
+              --values charts/app-backend/values-prod.yaml
+              --set image.tag=$IMAGE_TAG
+              --atomic
+              --timeout 5m
+              --wait
+
+    - step: &smoke-tests
+        name: Smoke tests post-deploy
+        image: alpine/k8s:1.29.2
+        script:
+          - echo $KUBECONFIG_B64 | base64 -d > /tmp/kubeconfig
+          - export KUBECONFIG=/tmp/kubeconfig
+          - |
+            DESIRED=$(kubectl get deployment app-backend -n $KUBE_NAMESPACE \
+              -o jsonpath='{.spec.replicas}')
+            READY=$(kubectl get deployment app-backend -n $KUBE_NAMESPACE \
+              -o jsonpath='{.status.readyReplicas}')
+            echo "Repliche: $READY/$DESIRED ready"
+            [ "$READY" != "$DESIRED" ] && \
+              echo "FAIL: non tutte le repliche sono ready" && exit 1
+            echo "OK"
+
+  services:
+    docker:
+      memory: 2048
+
+pipelines:
+  default:
+    - step: *build-and-push
+
+  branches:
+    main:
+      - step: *build-and-push
+      - step: *helm-deploy
+      - step: *smoke-tests
