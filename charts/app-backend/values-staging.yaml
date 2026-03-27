@@ -45,3 +45,9 @@ ingress:
   host: "api.staging.example.com"
   tls:
     enabled: false
+
+# ServiceMonitor disabled perchè non è presente il kube-prometheus-stack
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false

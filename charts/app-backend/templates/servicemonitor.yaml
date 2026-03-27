@@ -1,0 +1,23 @@
+# il ServiceMonitor (CRD Prometheus Operator) ogni tot sec dice a Prometheus di fare una GET :9100/metrics 
+# Per le metriche applicative è necessario avere il prom-client nell'app NodeJS configurato sulla porta applicativa o su una porta dedicata
+# aggiungere nella sezione endpoint la porta e il path relativo, in caso di porta custom aggiungerla anche al deployment
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "app-backend.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app-backend.labels" . | nindent 4 }}
+    # con kube-prometheus-stack il default è release: prometheus.
+    release: {{ .Values.metrics.serviceMonitor.prometheusRelease }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "app-backend.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: metrics
+      path: {{ .Values.metrics.path }}
+      interval: {{ .Values.metrics.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.metrics.serviceMonitor.scrapeTimeout }}
+{{- end }}

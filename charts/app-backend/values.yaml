@@ -92,3 +92,18 @@ pdb:
 logsVolume:
   enabled: true
   mountPath: "/app/logs"
+
+metrics:
+  enabled: true
+  port: 9100 # esponde metriche di sistema
+  path: /metrics
+  image:
+    repository: prom/node-exporter
+    tag: v1.10.2
+
+  # ServiceMonitor richiede kube-prometheus-stack installato nel cluster.
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    prometheusRelease: prometheus

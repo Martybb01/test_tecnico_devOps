@@ -82,6 +82,27 @@ spec:
               mountPath: /app/config
               readOnly: true
 
+        {{- if .Values.metrics.enabled }}
+        - name: prometheus-metrics
+          image: "{{ .Values.metrics.image.repository }}:{{ .Values.metrics.image.tag }}"
+          args:
+            - --web.listen-address=:{{ .Values.metrics.port }}
+            - --no-collector.filesystem
+            - --no-collector.netstat
+            - --no-collector.sockstat
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+        {{- end }}
+
       volumes:
         {{- if .Values.logsVolume.enabled }}
         - name: logs
