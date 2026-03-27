@@ -7,17 +7,14 @@ metadata:
     {{- include "redis.labels" . | nindent 4 }}
 data:
   redis.conf: |
-    # AOF persistence: ogni write viene appendata al file prima di rispondere al client
+    # AOF persistence --> ogni write viene appendata al file prima di rispondere al client
     appendonly yes
     appendfilename "appendonly.aof"
     appendfsync everysec # flusso su disco ogni sec
 
     dir /data
 
-    # maxmemory-policy: cosa fare quando si raggiunge il limite di memoria.
-    # allkeys-lru = rimuove le chiavi usate meno recentemente (LRU).
-    # Corretto per uso come cache — in prod impostare maxmemory esplicitamente.
-    maxmemory-policy allkeys-lru
+    maxmemory-policy allkeys-lru # rimuove le chiavi usate meno recentemente 
 
     {{- if .Values.auth.password }}
     requirepass {{ .Values.auth.password }}
