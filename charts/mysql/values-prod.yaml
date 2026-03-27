@@ -15,3 +15,4 @@ config:
   innodbBufferPoolSize: "512M"
 
 auth: {} # in prod le credenziali non vengono da questo file
+# pattern: secret su Secret Manager AWS --> creazione CRD ExternalSecret su kube --> External Secret Operator --> CronJob (secretKeyRef)
