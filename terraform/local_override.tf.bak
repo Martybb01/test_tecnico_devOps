@@ -1,0 +1,21 @@
+# Override per test locale senza usare AWS
+#   tofu init -backend=false
+#   tofu plan -var-file=terraform.tfvars
+# rinominare il file con .bak quando non serve più
+
+provider "aws" {
+  region                      = "eu-south-1"
+  access_key                  = "mock"
+  secret_key                  = "mock"
+  skip_credentials_validation = true
+  skip_requesting_account_id  = true
+  skip_metadata_api_check     = true
+
+  default_tags {
+    tags = {
+      Project     = "app"
+      Environment = "staging"
+      ManagedBy   = "terraform"
+    }
+  }
+}
