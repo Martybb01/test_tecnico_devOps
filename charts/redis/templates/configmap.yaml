@@ -8,13 +8,15 @@ metadata:
 data:
   redis.conf: |
     # AOF persistence --> ogni write viene appendata al file prima di rispondere al client
+    # everysec --> # flusso su disco ogni sec
     appendonly yes
     appendfilename "appendonly.aof"
-    appendfsync everysec # flusso su disco ogni sec
+    appendfsync everysec 
 
     dir /data
 
-    maxmemory-policy allkeys-lru # rimuove le chiavi usate meno recentemente 
+    # allkeys-lru --> rimuove le chiavi usate meno recentemente 
+    maxmemory-policy allkeys-lru 
 
     {{- if .Values.auth.password }}
     requirepass {{ .Values.auth.password }}
