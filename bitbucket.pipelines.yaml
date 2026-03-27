@@ -48,7 +48,6 @@ definitions:
 
           - helm upgrade --install app-backend charts/app-backend
               --namespace $KUBE_NAMESPACE
-              --create-namespace
               --values charts/app-backend/values-prod.yaml
               --set image.tag=$IMAGE_TAG
               --atomic
