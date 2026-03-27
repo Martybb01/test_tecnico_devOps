@@ -9,7 +9,6 @@
 ---
 image: docker:29-cli
 
-# TODO: check sulla versione delle immagini (docker, helm e alpine)
 definitions:
   steps:
     - step: &build-and-push
