@@ -1,6 +1,3 @@
-# il ServiceMonitor (CRD Prometheus Operator) ogni tot sec dice a Prometheus di fare una GET :9100/metrics 
-# Per le metriche applicative è necessario avere il prom-client nell'app NodeJS configurato sulla porta applicativa o su una porta dedicata
-# aggiungere nella sezione endpoint la porta e il path relativo, in caso di porta custom aggiungerla anche al deployment
 {{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor

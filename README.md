@@ -125,3 +125,19 @@ La pipeline è strutturata in tre step eseguiti in sequenza su push al branch `m
 | `DOCKERHUB_PASSWORD` | Token DockerHub (secret) |
 | `KUBE_NAMESPACE` | Namespace target (es. `app-prod`) |
 | `KUBECONFIG_B64` | Kubeconfig codificato in base64 (secret) |
+
+### 4.2 Monitoring & Logging
+
+Il monitoring è implementato nel chart `app-backend` tramite un sidecar container e un ServiceMonitor CRD.
+
+**Sidecar `prometheus-metrics`**
+
+`prom/node-exporter` gira come side container nel pod affianco al backend ed espone metriche di processo e di sistema su `:9100/metrics`. Tre collector sono disabilitati esplicitamente (`filesystem`, `netstat`, `sockstat`) perché operando nel namespace isolato del pod, produrrebbero dati parziali.
+
+Se l'app Node.js espone metriche applicative via `prom-client` è possibile aggiungere un secondo endpoint al ServiceMonitor puntando alla porta dell'app.
+
+**ServiceMonitor**
+
+CRD del Prometheus Operator che dice a Prometheus di scrapare `:9100/metrics` ogni 30s. Richiede `kube-prometheus-stack` installato nel cluster. Disabilitato in `values-staging.yaml` per ambienti locali senza Operator.
+
+> **Parti 4.3–4.4** (Disaster Recovery, Cost Optimization) non ancora implementate.
