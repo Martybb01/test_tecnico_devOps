@@ -1,4 +1,5 @@
 # Override per test locale senza usare AWS
+#   commentare blocco backend "s3" in backend.tf
 #   tofu init -backend=false
 #   tofu plan -var-file=terraform.tfvars
 # rinominare il file con .bak quando non serve più

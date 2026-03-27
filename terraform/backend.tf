@@ -1,8 +1,3 @@
-# Deploy su AWS --> 
-#   1. Crea bucket S3 "app-tfstate-prod" in eu-south-1
-#   2. tofu init && tofu plan -var-file=terraform.tfvars
-#   3. tofu apply -var-file=terraform.tfvars
-
 terraform {
   required_version = ">= 1.6"
 

@@ -1,5 +1,4 @@
 # RDS proxy si interpone tra l'app e il db RDS ed è utile per connection pooling, IAM auth tramite token e failover più rapido perchè le app non si disconnettono
-# Per farlo funzionare --> deve esistere un RDS istance + secrets su AWS con le cred del DB
 
 locals {
   name = "${var.project_name}-${var.environment}"

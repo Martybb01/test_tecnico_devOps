@@ -1,10 +1,5 @@
 # Pipeline CI/CD x build e push su DockerHub di Docker image + helm deploy su push a main + smoke test base post-deploy per le repliche
 # Non runnata essendo su GitHub e a scopo di test ma validata sintatticamente e semanticamente con yamllint + validator ufficiale Bitbucket
-# Variabili da configurare in Bitbucket > Repository Settings > Pipelines > Repository variables:
-#   DOCKERHUB_USERNAME    (es. martinaboccuzzi)
-#   DOCKERHUB_PASSWORD    (secret)
-#   KUBE_NAMESPACE        (es. app-prod)
-#   KUBECONFIG_B64        base64 del kubeconfig per il cluster target (secret)
 #
 #   - In un contesto reale con app Node.js si aggiungerebbero anche:
 #       * npm ci && npm run lint && npm run test
