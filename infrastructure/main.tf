@@ -1,5 +1,5 @@
 # Ordine di dipendenza:
-#   modules/lambda (nessuna dep) → sqs (nessuna dep) → eventbridge (riceve ARN da lambda + sqs)
+# modules/lambda (nessuna dep) → sqs (nessuna dep) → eventbridge (riceve ARN da lambda + sqs)
 
 module "lambda_order_processor" {
   source        = "./modules/lambda"
@@ -61,9 +61,9 @@ module "lambda_data_sync" {
   security_group_ids = var.lambda_security_group_ids
   ephemeral_storage_size = 10240
   enable_xray            = true 
-  sns_topic_arn          = var.sns_topic_arn       # permesso IAM sns:Publish
+  sns_topic_arn          = var.sns_topic_arn # permesso IAM sns:Publish
   data_lake_bucket_arn   = var.data_lake_bucket_arn # permesso IAM s3:PutObject
-  kms_key_arn            = var.kms_key_arn          # permesso IAM kms:GenerateDataKey + kms:Decrypt
+  kms_key_arn            = var.kms_key_arn # permesso IAM kms:GenerateDataKey + kms:Decrypt
   environment_variables = {
     DB_HOST          = var.db_host
     DATA_LAKE_BUCKET = var.data_lake_bucket

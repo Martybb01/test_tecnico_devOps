@@ -1,6 +1,6 @@
 variable "dlq_arn" {
   type        = string
-  description = "ARN della DLQ SQS — usato in dead_letter_config del target email-notifier"
+  description = "ARN della DLQ SQS"
 }
 
 variable "dlq_queue_url" {
