@@ -140,4 +140,12 @@ Se l'app Node.js espone metriche applicative via `prom-client` è possibile aggi
 
 CRD del Prometheus Operator che dice a Prometheus di scrapare `:9100/metrics` ogni 30s. Richiede `kube-prometheus-stack` installato nel cluster. Disabilitato in `values-staging.yaml` per ambienti locali senza Operator.
 
-> **Parti 4.3–4.4** (Disaster Recovery, Cost Optimization) non ancora implementate.
+### 4.3 Disaster Recovery
+
+Lo script di backup è in [backup/backup-mysql.sh](backup/backup-mysql.sh). Esegue `mysqldump`, comprime il dump con gzip e lo carica su S3 con SSE-KMS. Le variabili di connessione e le credenziali vengono iniettate tramite env, in Kubernetes tramite Secret.
+
+In produzione lo script viene schedulato da un **CronJob Kubernetes** (es. `0 2 * * *`).
+
+La procedura completa di restore da un backup S3 è documentata in [disaster-recovery.md](disaster-recovery.md).
+
+> **Parte 4.4** (Cost Optimization) non ancora implementata.
