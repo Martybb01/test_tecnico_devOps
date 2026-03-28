@@ -1,2 +1,5 @@
 /terraform/.terraform
 /terraform/.terraform.lock.hcl
+/infrastructure/.terraform
+/infrastructure/.terraform.lock.hcl
+/infrastructure/modules/lambda/archives
