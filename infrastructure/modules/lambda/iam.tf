@@ -101,9 +101,7 @@ resource "aws_iam_role_policy" "s3_write" {
     Statement = [{
       Effect   = "Allow"
       Action   = [
-        "s3:PutObject",
-        "s3:PutObjectAcl" 
-      ]
+        "s3:PutObject", "s3:PutObjectAcl"]
       Resource = "${var.data_lake_bucket_arn}/*"
     }]
   })
@@ -129,4 +127,20 @@ resource "aws_iam_role_policy_attachment" "sqs_execution" {
   count      = var.enable_sqs_trigger ? 1 : 0
   role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole"
+}
+
+
+resource "aws_iam_role_policy" "ses_send" {
+  count = var.ses_sender_arn != "" ? 1 : 0
+  name  = "allow-ses-send"
+  role  = aws_iam_role.lambda.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = "ses:SendEmail"
+      Resource = var.ses_sender_arn
+    }]
+  })
 }

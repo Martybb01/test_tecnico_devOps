@@ -45,6 +45,7 @@ module "lambda_email_notifier" {
   source_dir    = "${path.module}/lambda/email-notifier"
   project_name  = var.project_name
   environment   = var.environment
+  ses_sender_arn = var.ses_sender_arn
 }
 
 module "lambda_data_sync" {

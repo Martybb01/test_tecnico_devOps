@@ -113,3 +113,9 @@ variable "enable_sqs_trigger" {
   description = "Abilita il permesso IAM per consumare messaggi SQS"
   default     = false
 }
+
+variable "ses_sender_arn" {
+  type        = string
+  description = "ARN dell'identità SES verificata"
+  default     = ""
+}

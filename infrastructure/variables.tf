@@ -68,3 +68,9 @@ variable "dynamodb_table_arn" {
   description = "ARN della tabella DynamoDB"
   default     = ""
 }
+
+variable "ses_sender_arn" {
+  type        = string
+  description = "ARN identità SES"
+  default     = ""
+}

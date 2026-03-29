@@ -53,11 +53,11 @@ resource "aws_schemas_schema" "order_created" {
 }
 
 output "event_bus_name" {
-  description = "Nome del custom event bus — usato dalle Lambda come EVENT_BUS_NAME"
+  description = "Nome del custom event bus"
   value       = aws_cloudwatch_event_bus.order_events.name
 }
 
 output "event_bus_arn" {
-  description = "ARN del custom event bus — usato nelle IAM policy delle Lambda"
+  description = "ARN del custom event bus"
   value       = aws_cloudwatch_event_bus.order_events.arn
 }
