@@ -1,5 +1,5 @@
-# Per prod: helm install ... -f values-prod.yaml
-# Per staging: helm install ... -f values-staging.yaml
+# Per prod: helm upgrade --install ... -f values-prod.yaml
+# Per staging: helm upgrade --install ... -f values-staging.yaml
 
 image:
   repository: "your-registry/app-backend"

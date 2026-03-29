@@ -3,7 +3,7 @@ name: frontend
 description: Frontend Nginx come DaemonSet
 type: application
 version: 0.1.0
-appVersion: "1.25"
+appVersion: "1.28"
 maintainers:
   - name: DevOps Team
     email: devops@example.com
