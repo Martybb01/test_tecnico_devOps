@@ -152,7 +152,7 @@ La procedura completa di restore da un backup S3 è documentata in [disaster-rec
 
 ## Parte 5 — Serverless Architecture (Lambda & EventBridge)
 
-L'architettura event-driven è implementata via **OpenTofu** nella folder `infrastructure/`. Il diagramma è in [lambda_architecture.svg](lambda_architecture.svg).
+L'architettura event-driven è implementata via **OpenTofu** nella folder `infrastructure/`. Il diagramma è in [architecture_lambda.svg](architectur_lambda_.svg).
 
 **Componenti IaC creati:**
 - Modulo Lambda riusabile (`modules/lambda/`) con supporto a VPC, X-Ray, ephemeral storage, concurrency riservata
