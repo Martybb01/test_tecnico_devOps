@@ -16,7 +16,7 @@ output "public_subnet_ids" {
 }
 
 output "cluster_endpoint" {
-  description = "Endpoint HTTPS del cluster EKS - usato da kubectl e Helm"
+  description = "Endpoint HTTPS del cluster EKS"
   value       = module.eks.cluster_endpoint
 }
 
@@ -26,7 +26,7 @@ output "cluster_name" {
 }
 
 output "cluster_certificate_authority" {
-  description = "CA certificate del cluster (base64) - necessario per kubectl"
+  description = "CA certificate del cluster (base64)"
   value       = module.eks.cluster_certificate_authority
   sensitive   = true
 }
