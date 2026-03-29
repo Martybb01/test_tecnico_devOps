@@ -148,4 +148,27 @@ In produzione lo script viene schedulato da un **CronJob Kubernetes** (es. `0 2 
 
 La procedura completa di restore da un backup S3 è documentata in [disaster-recovery.md](disaster-recovery.md).
 
-> **Parte 4.4** (Cost Optimization) non ancora implementata.
+---
+
+## Parte 5 — Serverless Architecture (Lambda & EventBridge)
+
+L'architettura event-driven è implementata via **OpenTofu** nella folder `infrastructure/`. Il diagramma è in [lambda_architecture.svg](lambda_architecture.svg).
+
+**Componenti IaC creati:**
+- Modulo Lambda riusabile (`modules/lambda/`) con supporto a VPC, X-Ray, ephemeral storage, concurrency riservata
+- Custom EventBridge bus `order-events` con archive (30gg) e schema registry OpenAPI per l'evento `OrderCreated`
+- SQS DLQ per i fallimenti dell'email-notifier (retention 14gg), con policy che autorizza EventBridge a scriverci sopra
+- IAM policies granulari per ogni funzione: EventBridge publish, DynamoDB write, S3/KMS write, SES send, SQS trigger
+
+**Orchestrazione (`main.tf`):** il root module istanzia i quattro moduli Lambda con i parametri specifici, la concurrency provisionata sull'`order-processor` (alias `live`, 5 istanze), il modulo SQS e infine il modulo EventBridge che riceve gli ARN delle Lambda e della DLQ. L'`event_source_mapping` tra DLQ e `dlq-processor` è dichiarata nel root per evitare la dipendenza circolare tra i due moduli (lambda e sqs).
+
+> **Nota:** il codice delle Lambda non è stato implementato.
+
+**Cosa andrebbe in ciascun handler:**
+
+| Lambda | Logica core |
+|---|---|
+| `order-processor` | Validazione payload, `PutItem` su DynamoDB, `PutEvents` su EventBridge con `source: myapp.orders` / `detail-type: OrderCreated` |
+| `email-notifier` | Parsing dell'evento da EventBridge, composizione template email, `SendEmail` via SES con retry gestito dal runtime |
+| `data-sync` | Query su RDS, compressione gzip del risultato, `PutObject` su S3 con SSE-KMS, `Publish` su SNS a completamento |
+| `dlq-processor` | Lettura batch dalla SQS DLQ, log strutturato su CloudWatch con `orderId` e causa del fallimento |

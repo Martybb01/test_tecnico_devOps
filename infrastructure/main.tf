@@ -92,8 +92,6 @@ module "sqs" {
   environment  = var.environment
 }
 
-# event_source_mapping collegata nel root per evitare dipendenza circolare:
-# sqs aveva bisogno dell'ARN della Lambda e la Lambda aveva bisogno dell'ARN della coda
 resource "aws_lambda_event_source_mapping" "dlq_processor" {
   event_source_arn = module.sqs.dlq_arn
   function_name    = module.lambda_dlq_processor.function_arn
