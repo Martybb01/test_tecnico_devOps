@@ -146,7 +146,7 @@ Lo script di backup è in [backup/backup-mysql.sh](backup/backup-mysql.sh). Eseg
 
 In produzione lo script viene schedulato da un **CronJob Kubernetes** (es. `0 2 * * *`).
 
-La procedura completa di restore da un backup S3 è documentata in [disaster-recovery.md](disaster-recovery.md).
+La procedura completa di restore da un backup S3 è documentata in [backup/disaster-recovery.md](backup/disaster-recovery.md).
 
 ---
 
