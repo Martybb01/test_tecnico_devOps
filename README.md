@@ -1,8 +1,6 @@
 # Test Tecnico DevOps — Multi-Tier App su AWS EKS
 
-Deploy di un'applicazione multi-tier in produzione su Kubernetes (EKS) con IaC, Helm charts, script di deployment automatizzato e pipeline CI/CD.
-
-**Stack applicativo:** Backend Node.js API · MySQL (StatefulSet) · Redis (StatefulSet) · Frontend Nginx (DaemonSet)
+Deploy di un'applicazione multi-tier su AWS EKS con IaC, Helm charts, pipeline CI/CD e architettura serverless event-driven.
 
 ---
 
@@ -57,6 +55,8 @@ rds_secret_arn   = "<arn-del-secret-in-secrets-manager>"
 ## Parte 2 — Helm Charts
 
 Ogni chart segue la stessa struttura con `values.yaml`, `values-prod.yaml`, `values-staging.yaml` e i template Kubernetes corrispondenti. I file sono annotati inline per i dettagli implementativi.
+
+**Stack applicativo:** Backend Node.js API · MySQL (StatefulSet) · Redis (StatefulSet) · Frontend Nginx (DaemonSet)
 
 | Chart | Tipo |
 |---|---|
