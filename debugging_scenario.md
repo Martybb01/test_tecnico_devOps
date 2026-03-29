@@ -51,12 +51,6 @@ In produzione con ALB e address assegnato:
 curl -k -H "Host: api.example.com" https://<ALB-ADDRESS>/api/health
 ```
 
-In locale senza ALB:
-```bash
-kubectl port-forward svc/app-backend 4200:80 -n <namespace>
-curl -v http://localhost:4200/api/health
-```
-
 ---
 
 ## 3. MySQL non si connette
@@ -75,4 +69,4 @@ Nel setup attuale la NetworkPolicy su MySQL permette esplicitamente traffico in 
 
 Potrebbero bloccare:
 - Una policy **default-deny** senza eccezioni esplicite per questo flusso
-- Una policy **Egress** restrittiva sul pod backend verso la porta 3306 — da notare che le policy attuali coprono solo Ingress, quindi una regola Egress sul backend sarebbe sufficiente a bloccare la connessione anche se quella su MySQL la permette in ingresso
+- Una policy **Egress** restrittiva sul pod backend verso la porta 3306 --> una regola engress sul backend sarebbe sufficiente a bloccare la connessione anche se quella su MySQL la permette in ingresso

@@ -15,7 +15,7 @@ warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
 fail() { echo -e "${RED}[FAIL]${NC} $*"; exit 1; }
 info() { echo -e "  --> $*"; }
 
-NAMESPACE="app-try"
+NAMESPACE="app-staging"
 RELEASE_MYSQL="mysql"
 RELEASE_REDIS="redis"
 RELEASE_BACKEND="app-backend"
@@ -144,6 +144,7 @@ sleep 2
 
 HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:4200/health 2>/dev/null || echo "000")
 kill $PF_PID 2>/dev/null || true
+wait $PF_PID 2>/dev/null || true
 
 if [ "$HTTP_STATUS" = "200" ]; then
   ok "/health risponde HTTP $HTTP_STATUS"
