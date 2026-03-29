@@ -87,6 +87,8 @@ Lo script automatizza l'intero ciclo di deployment e test:
 ```bash
 chmod +x deploy.sh
 ./deploy.sh
+# Setup locale minikube
+minikube start --nodes=2 --driver=docker
 ```
 
 **Smoke tests inclusi:**
@@ -142,7 +144,7 @@ CRD del Prometheus Operator che dice a Prometheus di scrapare `:9100/metrics` og
 
 ### 4.3 Disaster Recovery
 
-Lo script di backup è in [backup/backup-mysql.sh](backup/backup-mysql.sh). Esegue `mysqldump`, comprime il dump con gzip e lo carica su S3 con SSE-KMS. Le variabili di connessione e le credenziali vengono iniettate tramite env, in Kubernetes tramite Secret.
+Lo script di backup è in [backup/backup-mysql.sh](backup/backup-mysql.sh). Esegue `mysqldump`, comprime il dump con gzip e lo carica su S3 con SSE-KMS.
 
 In produzione lo script viene schedulato da un **CronJob Kubernetes** (es. `0 2 * * *`).
 
