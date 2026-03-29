@@ -1,6 +1,6 @@
 # collegamento policy - lambda attraverso il role, diverso per ogni istanza del modulo
 # order-processor  → basic + vpc + eventbridge + dynamodb
-# email-notifier   → basic
+# email-notifier   → basic + ses
 # data-sync        → basic + vpc + xray + sns + s3 + kms
 # dlq-processor    → basic + sqs
 
